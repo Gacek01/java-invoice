@@ -7,7 +7,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import pl.edu.agh.mwo.invoice.product.BottleOfWine;
 import pl.edu.agh.mwo.invoice.product.DairyProduct;
+import pl.edu.agh.mwo.invoice.product.FuelCanister;
 import pl.edu.agh.mwo.invoice.product.OtherProduct;
 import pl.edu.agh.mwo.invoice.product.Product;
 import pl.edu.agh.mwo.invoice.product.TaxFreeProduct;
@@ -146,5 +148,41 @@ public class InvoiceTest {
         invoice.addProduct(rogal);
         int quantity2 = invoice.getProducts().get(bagietka);
         Assert.assertEquals(quantity1, quantity2);
+    }
+    
+    @Test
+    public void testCarrierDayTaxReducedForFuel() {
+        invoice.setIssueDate(2021, 4, 26);
+        FuelCanister fuelCanister = new FuelCanister("Fuel Canister", new BigDecimal("80"));
+        invoice.addProduct(fuelCanister);
+        BigDecimal reducedPrice = invoice.carrierDayPriceChange(fuelCanister);
+        Assert.assertEquals(fuelCanister.getPrice().add(fuelCanister.getExcise()), reducedPrice);
+    }
+
+    @Test
+    public void testCasualDayTaxNotReducedforFuel() {
+        invoice.setIssueDate(2021, 6, 22);
+        FuelCanister fuelCanister = new FuelCanister("Fuel canister", new BigDecimal("70"));
+        invoice.addProduct(fuelCanister);
+        BigDecimal reducedPrice = invoice.carrierDayPriceChange(fuelCanister);
+        Assert.assertNotEquals(fuelCanister.getPrice().add(fuelCanister.getExcise()), reducedPrice);
+    }
+    
+    @Test
+    public void testCarrierDayTaxNotReducedForWine() {
+        invoice.setIssueDate(2021, 4, 26);
+        BottleOfWine wine = new BottleOfWine("Bottle of Wine", new BigDecimal("50"));
+        invoice.addProduct(wine);
+        BigDecimal reducedPrice = invoice.carrierDayPriceChange(wine);
+        Assert.assertEquals(wine.getPriceWithTax(), reducedPrice);
+    }
+
+    @Test
+    public void testCarrierDayOtherProducts() {
+        invoice.setIssueDate(2021, 4, 26);
+        Product bagietka = new OtherProduct("Bagietka", new BigDecimal("6"));
+        invoice.addProduct(bagietka);
+        BigDecimal reducedPrice = invoice.carrierDayPriceChange(bagietka);
+        Assert.assertEquals(bagietka.getPriceWithTax(), reducedPrice);
     }
 }
