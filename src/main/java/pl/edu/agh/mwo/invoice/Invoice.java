@@ -18,7 +18,11 @@ public class Invoice {
         if (product == null || quantity <= 0) {
             throw new IllegalArgumentException();
         }
-        products.put(product, quantity);
+        if (products.get(product) == null) {
+            products.put(product, quantity);
+        } else {
+            products.put(product, products.get(product) + quantity);
+        }
     }
 
     public BigDecimal getNetTotal() {
@@ -55,5 +59,9 @@ public class Invoice {
                     + "| unit price: ");
         }
         System.out.print("Total number of items: " + products.size());
+    }
+
+    public Map<Product, Integer> getProducts() {
+        return products;
     }
 }

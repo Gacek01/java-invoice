@@ -7,7 +7,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import pl.edu.agh.mwo.invoice.Invoice;
 import pl.edu.agh.mwo.invoice.product.DairyProduct;
 import pl.edu.agh.mwo.invoice.product.OtherProduct;
 import pl.edu.agh.mwo.invoice.product.Product;
@@ -116,5 +115,36 @@ public class InvoiceTest {
         int invoiceNumber1 = invoice.getInvoiceNumber();
         int invoiceNumber2 = new Invoice().getInvoiceNumber();
         Assert.assertNotEquals(invoiceNumber1, invoiceNumber2);
+    }
+    
+    @Test
+    public void testAddOneDuplicateProduct() {
+        OtherProduct bagietka = new OtherProduct("Bagietka", new BigDecimal("6.5"));
+        invoice.addProduct(bagietka);
+        invoice.addProduct(bagietka);
+        int quantity1 = invoice.getProducts().get(bagietka);
+        invoice.addProduct(bagietka);
+        int quantity2 = invoice.getProducts().get(bagietka);
+        Assert.assertEquals(quantity2 - quantity1, 1);
+    }
+    @Test
+    public void testAddManyDuplicateProducts() {
+        OtherProduct bagietka = new OtherProduct("Bagietka", new BigDecimal("7"));
+        invoice.addProduct(bagietka);
+        int quantity1 = invoice.getProducts().get(bagietka);
+        invoice.addProduct(bagietka, 7);
+        int quantity2 = invoice.getProducts().get(bagietka);
+        Assert.assertNotEquals(quantity2 - quantity1, quantity1);
+    }
+    
+    @Test
+    public void testAddDifferentProducts() {
+        OtherProduct bagietka = new OtherProduct("Bagietka", new BigDecimal("6.25"));
+        OtherProduct rogal = new OtherProduct("Rogal", new BigDecimal("3.5"));
+        invoice.addProduct(bagietka);
+        int quantity1 = invoice.getProducts().get(bagietka);
+        invoice.addProduct(rogal);
+        int quantity2 = invoice.getProducts().get(bagietka);
+        Assert.assertEquals(quantity1, quantity2);
     }
 }
