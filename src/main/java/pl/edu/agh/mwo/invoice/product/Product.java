@@ -25,11 +25,11 @@ public abstract class Product {
     }
 
     public BigDecimal getPrice() {
-		return this.price;
-	}
+        return this.price;
+    }
 
-	public BigDecimal getTaxPercent() {
-		return this.taxPercent;
+    public BigDecimal getTaxPercent() {
+        return this.taxPercent;
     }
 
     public BigDecimal getPriceWithTax() {
