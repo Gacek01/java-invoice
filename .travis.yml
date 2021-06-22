@@ -1,9 +1,5 @@
 language: java
 script: 
  - mvn test
- - mvn checkstyle:check 
 after_success:
  - bash <(curl -s https://codecov.io/bash)
-env:
-  global:
-    - CODECOV_TOKEN='2a07261c-e569-406d-a664-c97bcda9f2ee'
